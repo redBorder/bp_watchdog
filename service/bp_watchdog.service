@@ -1,0 +1,22 @@
+[Unit]
+Description= This shell script takes care of starting and stopping bp_watchdog daemon (watchdog for monitoring lan-bypass devices)
+ConditionFileIsExecutable=/usr/bin/bpctl_util
+ConditionFileIsExecutable=/usr/bin/bpctl_start
+ConditionFileIsExecutable=/usr/bin/bp_watchdog
+Wants=network.target
+After=network.target
+
+[Service]
+Environment="WATCHDOG_TIME=25600"
+EnvironmentFile=-/etc/bp_watchdog/bp_watchdog.conf
+ExecStartPre=/bin/bash -c '[ $EUID -eq 0 ]'
+ExecStartPre=/bin/bash -c '[ "x$NETWORKING" != "xno" ]'
+ExecStartPre=/bin/bash -c '[ -c /dev/bpctl ] && /usr/bin/bpctl_start &>/dev/null'
+ExecStartPre=/bin/bash -c '[ -c /dev/bpctl ]'
+ExecStartPre=/usr/bin/bpctl_util all set_bypass_wd $WATCHDOG_TIME &>/dev/null
+ExecStart=/usr/bin/bp_watchdog
+ExecStop=/usr/bin/bpctl_util all set_bypass_wd 0 &>/dev/null
+ExecStopPost=/usr/bin/bpctl_util all set_bypass_wd 0 &>/dev/null
+
+[Install]
+WantedBy=multi-user.target
