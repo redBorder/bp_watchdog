@@ -11,7 +11,7 @@ Environment="WATCHDOG_TIME=25600"
 EnvironmentFile=-/etc/bp_watchdog/bp_watchdog.conf
 ExecStartPre=/bin/bash -c '[ $EUID -eq 0 ]'
 ExecStartPre=/bin/bash -c '[ "x$NETWORKING" != "xno" ]'
-ExecStartPre=/bin/bash -c '[ -c /dev/bpctl ] && /usr/bin/bpctl_start &>/dev/null'
+ExecStartPre=/bin/bash -c '[ -c /dev/bpctl ] || /usr/bin/bpctl_start &>/dev/null'
 ExecStartPre=/bin/bash -c '[ -c /dev/bpctl ]'
 ExecStartPre=/usr/bin/bpctl_util all set_bypass_wd $WATCHDOG_TIME &>/dev/null
 ExecStart=/usr/bin/bp_watchdog
