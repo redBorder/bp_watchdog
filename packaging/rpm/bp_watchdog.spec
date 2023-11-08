@@ -11,6 +11,8 @@ Requires: bpctl
 Summary: bypass watchdog 
 Group:   Development/Utilities
 
+%global debug_package %{nil}
+
 %description
 %{summary}
 
